@@ -34,7 +34,7 @@ app.use(express.json());
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Welcome to the API');
+  res.send('Api working');
 });
 
 app.use('/api', usersRouters);
