@@ -38,3 +38,11 @@ export const Register = async (req: Request, res: Response) => {
     res.status(500).json({ message: error });
   }
 };
+
+export const getUserProfile = (req: Request, res: Response) => {
+  try {
+    console.log('users');
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
