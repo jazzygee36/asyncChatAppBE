@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import jwt, { sign } from 'jsonwebtoken';
 import User from '../models/users.schama';
 
-const createToken = (email: string, userId: number) => {
-  return sign({ email, userId }, process.env.JWT_KEY as string, {
-    expiresIn: '48h',
-  });
-};
+// const createToken = (email: string, userId: number) => {
+//   return sign({ email, userId }, process.env.JWT_KEY as string, {
+//     expiresIn: '48h',
+//   });
+// };
 
 export const Register = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
@@ -36,12 +36,6 @@ export const Register = async (req: Request, res: Response) => {
       password: hashPassword,
     });
 
-    res.cookie('jwt', createToken(email, users.id), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    });
-
     return res.status(201).json({ message: 'Registered successfully', users });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
@@ -66,18 +60,26 @@ export const userLogin = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    res.cookie('jwt', createToken(email, user.id), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    });
+    // Generate a JWT token with the user profile ID in the payload
+    const token = jwt.sign(
+      {
+        username: user.username,
+        userId: user.id,
+      },
+      process.env.JWT_KEY as string, // Use the JWT secret from environment variables
+      { expiresIn: '48h' } // Token expiration time
+    );
 
     return res.status(200).json({
       user: {
         id: user.id,
         email: user.email,
         profileSetup: user.profileSetup,
+        username: user.username,
+        color: user.color,
+        image: user.image,
       },
+      token,
     });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
