@@ -41,7 +41,7 @@ export const Register = async (req: Request, res: Response) => {
 
 export const getUserProfile = (req: Request, res: Response) => {
   try {
-    console.log('users');
+    res.send('users');
   } catch (error) {
     res.status(500).json({ message: error });
   }
