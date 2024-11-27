@@ -76,7 +76,7 @@ export const userLogin = async (req: Request, res: Response) => {
         email: user.email,
         profileSetup: user.profileSetup,
         username: user.username,
-        color: user.color,
+      
         image: user.image,
       },
       token,
@@ -138,12 +138,49 @@ export const getUserProfile = async (
         email: userData.email,
         profileSetup: userData.profileSetup,
         username: userData.username,
-        color: userData.color,
-        image: userData.image,
+             image: userData.image,
       },
     });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const updateUserProfile = async (req: Request & { userId?: string }, res: Response) => {
+
+  const { userId,  image } = req.body;
+
+  if ( !image || !userId) {
+    return res.status(400).json({ message: 'Image is required.' });
+  }
+
+  try {
+    const updateProfile = await User.findByIdAndUpdate(
+      userId,
+      {
+       
+        image,
+        profileSetup: true,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updateProfile) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    return res.status(200).json({
+      user: {
+        id: updateProfile.id,
+        email: updateProfile.email,
+        profileSetup: updateProfile.profileSetup,
+        username: updateProfile.username,
+        image: updateProfile.image,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };

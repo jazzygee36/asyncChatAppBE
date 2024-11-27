@@ -6,7 +6,7 @@ export interface IUser extends Document {
   username: string;
 
   image: string;
-  color: number;
+
   profileSetup: boolean;
 }
 
@@ -20,7 +20,7 @@ const userSchema = new Schema<IUser>({
   username: { type: String, required: false },
 
   image: { type: String, required: false },
-  color: { type: Number, required: false },
+ 
   profileSetup: { type: Boolean, required: false },
 });
 
