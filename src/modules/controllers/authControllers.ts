@@ -205,11 +205,11 @@ export const searchContacts = async (req: Request, res: Response) => {
     // Sanitize and prepare the search term
     const sanitizedSearchTerm = searchTerm.trim();
     // Check if the search term is too short (less than 2 characters)
-    if (sanitizedSearchTerm.length < 2) {
-      return res
-        .status(400)
-        .json({ message: 'Search term must be at least 2 characters long' });
-    }
+    // if (sanitizedSearchTerm.length < 2) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: 'Search term must be at least 2 characters long' });
+    // }
     const regex = new RegExp(sanitizedSearchTerm, 'i'); // Case-insensitive search
 
     // Perform the query
