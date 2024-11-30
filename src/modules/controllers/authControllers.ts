@@ -193,10 +193,7 @@ export const updateUserProfile = async (
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
 };
-export const searchContacts: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
+export const searchContacts = async (req: Request, res: Response) => {
   const { searchTerm } = req.body;
 
   if (!searchTerm) {
@@ -207,6 +204,12 @@ export const searchContacts: RequestHandler = async (
   try {
     // Sanitize and prepare the search term
     const sanitizedSearchTerm = searchTerm.trim();
+    // Check if the search term is too short (less than 2 characters)
+    if (sanitizedSearchTerm.length < 2) {
+      return res
+        .status(400)
+        .json({ message: 'Search term must be at least 2 characters long' });
+    }
     const regex = new RegExp(sanitizedSearchTerm, 'i'); // Case-insensitive search
 
     // Perform the query
