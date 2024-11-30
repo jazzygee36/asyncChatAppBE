@@ -4,7 +4,8 @@ import {
   getUserProfile,
   userLogin,
   authenticateToken,
-  updateUserProfile
+  updateUserProfile,
+  searchContacts,
 } from '../controllers/authControllers';
 const router = express.Router();
 
@@ -19,6 +20,12 @@ router.post(
   '/update-profile',
   authenticateToken as RequestHandler,
   updateUserProfile as RequestHandler
+);
+
+router.post(
+  '/search',
+  authenticateToken as RequestHandler,
+  searchContacts as RequestHandler
 );
 
 export default router;

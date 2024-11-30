@@ -1,7 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt, { sign } from 'jsonwebtoken';
 import User from '../models/users.schama';
+
+import 'express';
+
+declare module 'express' {
+  export interface Request {
+    userId?: string;
+  }
+}
 
 // const createToken = (email: string, userId: number) => {
 //   return sign({ email, userId }, process.env.JWT_KEY as string, {
@@ -76,7 +84,7 @@ export const userLogin = async (req: Request, res: Response) => {
         email: user.email,
         profileSetup: user.profileSetup,
         username: user.username,
-      
+
         image: user.image,
       },
       token,
@@ -138,7 +146,7 @@ export const getUserProfile = async (
         email: userData.email,
         profileSetup: userData.profileSetup,
         username: userData.username,
-             image: userData.image,
+        image: userData.image,
       },
     });
   } catch (error) {
@@ -147,11 +155,13 @@ export const getUserProfile = async (
   }
 };
 
-export const updateUserProfile = async (req: Request & { userId?: string }, res: Response) => {
+export const updateUserProfile = async (
+  req: Request & { userId?: string },
+  res: Response
+) => {
+  const { userId, image } = req.body;
 
-  const { userId,  image } = req.body;
-
-  if ( !image || !userId) {
+  if (!image || !userId) {
     return res.status(400).json({ message: 'Image is required.' });
   }
 
@@ -159,7 +169,6 @@ export const updateUserProfile = async (req: Request & { userId?: string }, res:
     const updateProfile = await User.findByIdAndUpdate(
       userId,
       {
-       
         image,
         profileSetup: true,
       },
@@ -182,5 +191,35 @@ export const updateUserProfile = async (req: Request & { userId?: string }, res:
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+export const searchContacts: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { searchTerm } = req.body;
+
+  if (!searchTerm) {
+    res.status(400).json({ message: 'Search term is required' });
+    return;
+  }
+
+  try {
+    // Sanitize and prepare the search term
+    const sanitizedSearchTerm = searchTerm.trim();
+    const regex = new RegExp(sanitizedSearchTerm, 'i'); // Case-insensitive search
+
+    // Perform the query
+    const contacts = await User.find({
+      _id: { $ne: req.userId }, // Exclude the current user
+      $or: [
+        { username: regex }, // Match username
+        { email: regex }, // Match email if applicable
+      ],
+    });
+
+    res.status(200).json({ contacts });
+  } catch (error) {
+    res.status(500).json({ message: 'An error occurred', error });
   }
 };
