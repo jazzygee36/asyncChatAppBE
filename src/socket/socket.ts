@@ -2,7 +2,7 @@ import { Server as SocketIoServer } from 'socket.io';
 const setupSocket = (server: any) => {
   const io = new SocketIoServer(server, {
     cors: {
-      origin: process.env.ORIGIN,
+      origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
       credentials: true,
     },
