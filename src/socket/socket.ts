@@ -2,6 +2,7 @@ import { Server as SocketIoServer } from 'socket.io';
 const setupSocket = (server: any) => {
   const io = new SocketIoServer(server, {
     cors: {
+      origin: `https://asyncchat.netlify.app/`,
       methods: ['GET', 'POST'],
       credentials: true,
     },
