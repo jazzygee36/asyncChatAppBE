@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 dotenv.config();
 import usersRouters from './src/modules/routers/authRouter';
+import setupSocket from './src/socket/socket';
+import http from 'http';
 
 const app = express();
 const Port = process.env.PORT || 2000;
@@ -38,6 +40,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', usersRouters);
+const server = http.createServer(app);
+
+setupSocket(server);
 
 // app.listen(Port, () => {
 //   console.log(`Listen on Port ${Port}`);
