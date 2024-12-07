@@ -3,7 +3,8 @@ import Messages from '../modules/models/messages.schema';
 const setupSocket = (server: any) => {
   const io = new SocketIoServer(server, {
     cors: {
-      origin: `http://localhost:3000`,
+      // origin: `http://localhost:3000`,
+      origin: ['http://localhost:3000', 'https://asyncchat.netlify.app'],
       // origin: `https://asyncchat.netlify.app/`,
       methods: ['GET', 'POST'],
       credentials: true,
